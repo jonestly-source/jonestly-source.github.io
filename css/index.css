@@ -95,6 +95,7 @@ a {
   text-align: center;
   font-size: 0.8rem;
   margin: 2px 0 2px 0;
+  cursor: pointer;
 }
 .links {
   display: flex;
