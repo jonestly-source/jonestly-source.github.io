@@ -57,7 +57,7 @@
         />
         <!--<button type="submit" id="submit">Sign Up</button>-->
         <button type="submit" id="submit">Sign up</button>
-        <a href="index.html">Already have an account?</a>
+        <a href="index">Already have an account?</a>
       </div>
     </div>
     <script type="module">
@@ -126,7 +126,7 @@
       window.onload = function () {
         currentUser = JSON.parse(sessionStorage.getItem("users"));
         if (currentUser != null) {
-          window.location = "dashboard.html";
+          window.location = "dashboard";
         }
       };
 
@@ -154,7 +154,7 @@
                   console.log("sign up succesfully");
                   clear();
                   unload(btnId, txtCntnt);
-                  window.location.href = "index.html";
+                  window.location.href = "index";
                 })
                 .catch((error) => {
                   var alertInfo = "Unsuccessful, error";
