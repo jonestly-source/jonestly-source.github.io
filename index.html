@@ -35,7 +35,7 @@
           class="field"
         />
         <button type="submit" id="submit">Sign in</button>
-        <a href="register.html">Don't have an account?</a>
+        <a href="register">Don't have an account?</a>
       </div>
     </div>
     <script type="module">
@@ -97,13 +97,13 @@
         unload(btnId, txtCntnt);
         //alert("success");
         sessionStorage.setItem('users', JSON.stringify(users));
-        window.location="dashboard.html";
+        window.location="dashboard";
       }
       
       window.onload = function(){
 	    currentUser = JSON.parse(sessionStorage.getItem('users'));
 	    if(currentUser != null){
-	      window.location = "dashboard.html";
+	      window.location = "dashboard";
 	    }
 	    }
 	    
