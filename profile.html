@@ -25,11 +25,11 @@
         <img src="nothing-logo.png" alt="Nothing" class="logo" />
         <p class="name" id="name">Name</p>
         <div class="links">
-          <a href="dashboard.html">Dashboard</a>
+          <a href="dashboard">Dashboard</a>
           <span class="splitter">|</span>
-          <a id="signOut" href="index.html">Sign Out</a>
+          <a id="signOut" href="index">Sign Out</a>
           <span class="splitter">|</span>
-          <a id="donate" href="donate.html">Donate</a>
+          <a id="donate" href="donate">Donate</a>
         </div>
         <input
           type="text"
@@ -146,7 +146,7 @@
           username.value = currentUser.Username;
           email.value = currentUser.Email;
         } else {
-          window.location = "index.html";
+          window.location = "index";
         }
       };
 
@@ -193,7 +193,7 @@
                 }
               } else {
                 console.log("No data available");
-                window.location = "index.html";
+                window.location = "index";
               }
             })
             .catch((error) => {
@@ -230,7 +230,7 @@
             info(alertInfo);
             console.log(alertInfo);
             sessionStorage.removeItem("users");
-            window.location = "index.html";
+            window.location = "index";
           })
           .catch((error) => {
             var alertInfo = "Unsuccessful, error";
