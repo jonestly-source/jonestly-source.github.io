@@ -242,7 +242,7 @@
       
       function passCollapse(){
        for (var i = 0; i < passclass.length; i++) {
-          if (passclass[i].style.display == "none") {
+          if (!passclass[i].style.display || passclass[i].style.display == "none") {
             passclass[i].style.display = "block";
             content.style.height = "60vh";
           } else {
