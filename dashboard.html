@@ -25,11 +25,11 @@
         <img src="nothing-logo.png" alt="Nothing" class="logo" />
         <p class="name" id="name">Name</p>
         <div class="links">
-          <a href="profile.html">Profile</a>
+          <a href="profile">Profile</a>
           <span class="splitter">|</span>
-          <a id="signOut" href="index.html">Sign Out</a>
+          <a id="signOut" href="index">Sign Out</a>
           <span class="splitter">|</span>
-          <a id="donate" href="donate.html">Donate</a>
+          <a id="donate" href="donate">Donate</a>
         </div>
         <p class="link" id="userlink">Link</p>
         <div class="messages">
@@ -69,7 +69,7 @@
       window.onload = function () {
         getUsername();
         if (currentUser == null) {
-          window.location = "index.html";
+          window.location = "index";
         } else {
           content.style.marginTop = "0";
           name.textContent = currentUser.Username.charAt(0).toUpperCase() + currentUser.Username.slice(1);
