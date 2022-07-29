@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="css/index.css" />
+    <link rel="stylesheet" href="https://www.googleapis.com/webfonts/v1/webfonts?key=Poppins" type="text/css" media="all" />
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"
+      integrity="sha512-E8QSvWZ0eCLGk4km3hxSsNmGWbLtSCSUcewDQPQWZF6pEU8GlT8a5fF32wOl1i8ftdMhssTrF/OhyGWwonTcXA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script src="js/index.js"></script>
+    <title>Nothing</title>
+  </head>
+  <body>
+    <span id="dim"></span>
+    <div class="container">
+      <div class="alert" id="alert">
+        <p id="alert-text"></p>
+      </div>
+      <div class="content">
+        <img src="nothing-logo.png" alt="Nothing" class="logo" />
+        <input
+          type="text"
+          name="username"
+          id="username"
+          value=""
+          placeholder="Username"
+          class="field"
+        />
+        <input
+          type="email"
+          name="email"
+          id="email"
+          value=""
+          placeholder="Email"
+          class="field"
+        />
+        <input
+          type="password"
+          name="password"
+          id="password"
+          value=""
+          placeholder="Password"
+          class="field"
+        />
+        <input
+          type="password"
+          name="cpassword"
+          id="cpassword"
+          value=""
+          placeholder="Confirm Password"
+          class="field"
+        />
+        <!--<button type="submit" id="submit">Sign Up</button>-->
+        <button type="submit" id="submit">Sign up</button>
+        <a href="index.html">Already have an account?</a>
+      </div>
+    </div>
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.9.1/firebase-app.js";
+      const firebaseConfig = {
+        apiKey: "AIzaSyCuxZ0denbyqt5BwLn3md4S_lK4ukwpTmQ",
+        authDomain: "myproject-b37b7.firebaseapp.com",
+        databaseURL: "https://myproject-b37b7-default-rtdb.firebaseio.com",
+        projectId: "myproject-b37b7",
+        storageBucket: "myproject-b37b7.appspot.com",
+        messagingSenderId: "603520430780",
+        appId: "1:603520430780:web:d40d827a497d4791cf96b9",
+      };
+
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      import {
+        getDatabase,
+        ref,
+        set,
+        child,
+        update,
+        remove,
+        get,
+      } from "https://www.gstatic.com/firebasejs/9.9.1/firebase-database.js";
+      const db = getDatabase(app);
+      
+      let btnId = submit;
+      var txtCntnt = "Sign up";
+      var currentUser = null;
+      var username = document.getElementById("username");
+      var email = document.getElementById("email");
+      var password = document.getElementById("password");
+      var cpassword = document.getElementById("cpassword");
+      var submitBtn = document.getElementById("submit");
+      function validation() {
+        if (email.value != "" && password.value != "" && username.value != "") {
+          if (password.value == cpassword.value) {
+            console.log("password matched");
+            return true;
+          } else {
+            console.log("password doesn't matched");
+            var alertInfo = "password don't matched";
+            info(alertInfo);
+            unload(btnId, txtCntnt);
+            return false;
+          }
+        } else {
+          alert("All fields must not be empty.");
+          return false;
+        }
+      }
+
+      function encpass() {
+        var passhash = CryptoJS.AES.encrypt(password.value, password.value);
+        return passhash.toString();
+      }
+
+      function clear() {
+        username.value = "";
+        email.value = "";
+        password.value = "";
+        cpassword.value = "";
+      }
+
+      window.onload = function () {
+        currentUser = JSON.parse(sessionStorage.getItem("users"));
+        if (currentUser != null) {
+          window.location = "dashboard.html";
+        }
+      };
+
+      submitBtn.addEventListener("click", function () {
+        
+        loading(btnId);
+        if (validation(true)) {
+          const dbref = ref(db);
+          get(child(dbref, "users/" + username.value)).then((snapshot) => {
+            if (snapshot.exists()) {
+              let alertInfo = "Username exists";
+              info(alertInfo);
+              //alert("Username exists");
+              unload(btnId, txtCntnt);
+              return false;
+            } else {
+              set(ref(db, "users/" + username.value), {
+                Email: email.value,
+                Password: encpass(),
+                Username: username.value,
+              })
+                .then(() => {
+                  let alertInfo = "Sign up successfully";
+                  info(alertInfo);
+                  console.log("sign up succesfully");
+                  clear();
+                  unload(btnId, txtCntnt);
+                  window.location.href = "index.html";
+                })
+                .catch((error) => {
+                  var alertInfo = "Unsuccessful, error";
+                  info(alertInfo);
+                  unload(btnId, txtCntnt);
+                  //alert("unsuccessful, error" + error);
+                  console.log(error);
+                });
+            }
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

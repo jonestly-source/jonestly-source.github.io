@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="css/index.css" />
+    <title>Nothing</title>
+    <script src="js/index.js"></script>
+    <link rel="stylesheet" href="https://www.googleapis.com/webfonts/v1/webfonts?key=Poppins" type="text/css" media="all" />
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"
+      integrity="sha512-E8QSvWZ0eCLGk4km3hxSsNmGWbLtSCSUcewDQPQWZF6pEU8GlT8a5fF32wOl1i8ftdMhssTrF/OhyGWwonTcXA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+  </head>
+  <body>
+    <span id="dim"></span>
+      <div class="alert" id="alert">
+        <p id="alert-text"></p>
+      </div>
+    <div class="container">
+      <div class="content" id="content">
+        <img src="nothing-logo.png" alt="Nothing" class="logo" />
+        <p class="name" id="name">Name</p>
+        <div class="links">
+          <a href="profile.html">Profile</a>
+          <span class="splitter">|</span>
+          <a id="signOut" href="index.html">Sign Out</a>
+          <span class="splitter">|</span>
+          <a id="donate" href="donate.html">Donate</a>
+        </div>
+        <p class="link" id="userlink">Link</p>
+        <div class="messages">
+          <p class="message-text">Messages</p>
+          <p class="message-count">
+            You have <span id="count">(0)</span> messages.
+          </p>
+        </div>
+      </div>
+    </div>
+    <script type="text/javascript" charset="utf-8">
+      let name = document.getElementById("name");
+      let userlink = document.getElementById("userlink");
+      let signOut = document.getElementById("signOut");
+      let content = document.getElementById("content");
+      var currentUser = null;
+      function getUsername() {
+        currentUser = JSON.parse(sessionStorage.getItem("users"));
+      }
+      userlink.onclick = function () {
+        document.execCommand("copy");
+      };
+      userlink.addEventListener("copy", function () {
+        event.preventDefault();
+        if (event.clipboardData) {
+          event.clipboardData.setData("text/plain", userlink.textContent);
+          var infoAlert = "Link copied";
+          info(infoAlert);
+          console.log(event.clipboardData.getData("text"));
+        }
+      });
+
+      signOut.addEventListener("click", function () {
+        sessionStorage.removeItem("users");
+      });
+
+      window.onload = function () {
+        getUsername();
+        if (currentUser == null) {
+          window.location = "index.html";
+        } else {
+          content.style.marginTop = "0";
+          name.textContent = currentUser.Username.charAt(0).toUpperCase() + currentUser.Username.slice(1);
+          userlink.textContent = "nothing.me/say/" + currentUser.Username.toLowerCase();
+        }
+      };
+    </script>
+  </body>
+</html>

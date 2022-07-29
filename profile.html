@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="css/index.css" />
+    <title>Nothing</title>
+    <script src="js/index.js"></script>
+    <link rel="stylesheet" href="https://www.googleapis.com/webfonts/v1/webfonts?key=Poppins" type="text/css" media="all" />
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"
+      integrity="sha512-E8QSvWZ0eCLGk4km3hxSsNmGWbLtSCSUcewDQPQWZF6pEU8GlT8a5fF32wOl1i8ftdMhssTrF/OhyGWwonTcXA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+  </head>
+  <body>
+    <span id="dim"></span>
+    <div class="container">
+      <div class="alert" id="alert">
+        <p id="alert-text"></p>
+      </div>
+      <div class="content" id="content">
+        <img src="nothing-logo.png" alt="Nothing" class="logo" />
+        <p class="name" id="name">Name</p>
+        <div class="links">
+          <a href="dashboard.html">Dashboard</a>
+          <span class="splitter">|</span>
+          <a id="signOut" href="index.html">Sign Out</a>
+          <span class="splitter">|</span>
+          <a id="donate" href="donate.html">Donate</a>
+        </div>
+        <input
+          type="text"
+          name="username"
+          id="username"
+          value=""
+          placeholder="Username"
+          class="field"
+          disabled
+        />
+        <input
+          type="text"
+          name="email"
+          id="email"
+          value=""
+          placeholder="Email"
+          class="field"
+        />
+        <input
+          type="password"
+          name="password"
+          id="oldpassword"
+          value=""
+          placeholder="Current Password"
+          class="field pass"
+        />
+        <input
+          type="password"
+          name="password"
+          id="newpassword"
+          value=""
+          placeholder="New Password"
+          class="field pass"
+        />
+        <input
+          type="password"
+          name="password"
+          id="conpassword"
+          value=""
+          placeholder="Confirm Password"
+          class="field pass"
+        />
+        <button type="button" id="changepass">Change Password</button>
+        <button type="submit" id="deletebtn">Delete Account</button>
+        <button type="submit" id="submit">Update profile</button>
+      </div>
+    </div>
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.9.1/firebase-app.js";
+      const firebaseConfig = {
+        apiKey: "AIzaSyCuxZ0denbyqt5BwLn3md4S_lK4ukwpTmQ",
+        authDomain: "myproject-b37b7.firebaseapp.com",
+        databaseURL: "https://myproject-b37b7-default-rtdb.firebaseio.com",
+        projectId: "myproject-b37b7",
+        storageBucket: "myproject-b37b7.appspot.com",
+        messagingSenderId: "603520430780",
+        appId: "1:603520430780:web:d40d827a497d4791cf96b9",
+      };
+
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      import {
+        getDatabase,
+        ref,
+        set,
+        child,
+        update,
+        remove,
+        get,
+      } from "https://www.gstatic.com/firebasejs/9.9.1/firebase-database.js";
+      const db = getDatabase(app);
+      let name = document.getElementById("name");
+      let username = document.getElementById("username");
+      let email = document.getElementById("email");
+      let password = document.getElementById("oldpassword");
+      let newPassword = document.getElementById("newpassword");
+      let conPassword = document.getElementById("conpassword");
+      let passbtn = document.getElementById("changepass");
+      let passclass = document.getElementsByClassName("pass");
+      let signOut = document.getElementById("signOut");
+      let upDate = document.getElementById("submit");
+      let deletebtn = document.getElementById("deletebtn");
+      let content = document.getElementById("content");
+      var currentUser = null;
+      let btnId = submit;
+      let txtCntnt = "Update profile";
+      function getUsername() {
+        currentUser = JSON.parse(sessionStorage.getItem("users"));
+      }
+
+      function decpass(dbpass) {
+        var pass12 = CryptoJS.AES.decrypt(dbpass, password.value);
+        return pass12.toString(CryptoJS.enc.Utf8);
+      }
+
+      function encpass() {
+        var passhash = CryptoJS.AES.encrypt(
+          newPassword.value,
+          newPassword.value
+        );
+        return passhash.toString();
+      }
+
+      signOut.addEventListener("click", function () {
+        sessionStorage.removeItem("users");
+      });
+
+      window.onload = function () {
+        content.style.height = "50vh";
+        content.style.marginTop = "0";
+        getUsername();
+        if (currentUser != null) {
+          name.textContent = currentUser.Username;
+          username.value = currentUser.Username;
+          email.value = currentUser.Email;
+        } else {
+          window.location = "index.html";
+        }
+      };
+
+      upDate.addEventListener("click", function () {
+        loading(btnId);
+        if (passclass[0].style.display == "block") {
+          const dbRef = ref(getDatabase());
+          get(child(dbRef, `users/` + currentUser.Username))
+            .then((snapshot) => {
+              if (snapshot.exists()) {
+                let dbpass = decpass(snapshot.val().Password);
+                if (dbpass == password.value) {
+                  if (newPassword.value == conPassword.value) {
+                    update(ref(db, "users/" + currentUser.Username), {
+                      Email: email.value,
+                      Password: encpass(),
+                    })
+                      .then(() => {
+                        var alertInfo = "Updated successfully";
+                        password.value = "";
+                        newPassword.value = "";
+                        conPassword.value = "";
+                        passCollapse();
+                        info(alertInfo);
+                        unload(btnId, txtCntnt);
+                        console.log(alertInfo);
+                      })
+                      .catch((error) => {
+                        var alertInfo = "Unsuccessful, error";
+                        info(alertInfo);
+                        unload(btnId, txtCntnt);
+                        //alert("unsuccessful, error" + error);
+                        console.log(error);
+                      });
+                  } else {
+                    var alertInfo = "Password don't match";
+                    info(alertInfo);
+                    unload(btnId, txtCntnt);
+                  }
+                } else {
+                  var alertInfo = "Current password is not correct.";
+                  info(alertInfo);
+                  unload(btnId, txtCntnt);
+                }
+              } else {
+                console.log("No data available");
+                window.location = "index.html";
+              }
+            })
+            .catch((error) => {
+              console.error(error);
+            });
+        } else {
+          update(ref(db, "users/" + currentUser.Username), {
+            Email: email.value,
+          })
+            .then(() => {
+              var alertInfo = "Updated successfully";
+              info(alertInfo);
+              unload(btnId, txtCntnt);
+              console.log(alertInfo);
+            })
+            .catch((error) => {
+              var alertInfo = "Unsuccessful, error";
+              info(alertInfo);
+              unload(btnId, txtCntnt);
+              //alert("unsuccessful, error" + error);
+              console.log(error);
+            });
+        }
+      });
+
+      deletebtn.addEventListener("click", function () {
+        btnId = deletebtn;
+        loading(btnId);
+        submit.disable;
+        passbtn.disable;
+        remove(ref(db, "users/" + currentUser.Username))
+          .then(() => {
+            var alertInfo = "Account Deleted.";
+            info(alertInfo);
+            console.log(alertInfo);
+            sessionStorage.removeItem("users");
+            window.location = "index.html";
+          })
+          .catch((error) => {
+            var alertInfo = "Unsuccessful, error";
+            info(alertInfo);
+            //alert("unsuccessful, error" + error);
+            console.log(error);
+          });
+      });
+      
+      function passCollapse(){
+       for (var i = 0; i < passclass.length; i++) {
+          if (passclass[i].style.display == "none") {
+            passclass[i].style.display = "block";
+            content.style.height = "60vh";
+          } else {
+            passclass[i].style.display = "none";
+          }
+        }
+      }
+
+      passbtn.addEventListener("click", function () {
+        passCollapse();
+      });
+    </script>
+  </body>
+</html>
