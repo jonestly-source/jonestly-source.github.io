@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="/css/index.css" />
+  <link rel="shortcut icon" href="nothing.ico" type="image/x-icon" />
+  <title>Nothing</title>
+  <script src="/js/index.js"></script>
+ </head>
+ <body>
+  <span id="dim"></span>
+  <div class="alert" id="alert">
+   <p id="alert-text"></p>
+  </div>
+  <div class="container">
+   <div class="content" id="content">
+    <picture>
+     <source srcset="nothing-light.png" media="(prefers-color-scheme: dark)" />
+     <img src="nothing-logo.png" alt="Nothing" class="logo" />
+    </picture>
+    <p class="name" id="name"><span id="loading"></span></p>
+    <textarea
+     id="message"
+     class="field"
+     placeholder="Enter your message here..."
+     maxlength="900"
+    ></textarea>
+    <button type="submit" id="send">Send message</button>
+   </div>
+  </div>
+  <script type="module">
+   import { initializeApp } from "https://www.gstatic.com/firebasejs/9.9.1/firebase-app.js";
+   const firebaseConfig = {
+    apiKey: "AIzaSyCuxZ0denbyqt5BwLn3md4S_lK4ukwpTmQ",
+    authDomain: "myproject-b37b7.firebaseapp.com",
+    databaseURL: "https://myproject-b37b7-default-rtdb.firebaseio.com",
+    projectId: "myproject-b37b7",
+    storageBucket: "myproject-b37b7.appspot.com",
+    messagingSenderId: "603520430780",
+    appId: "1:603520430780:web:d40d827a497d4791cf96b9",
+   };
+
+   // Initialize Firebase
+   const app = initializeApp(firebaseConfig);
+   import {
+    getDatabase,
+    ref,
+    child,
+    get,
+    push,
+   } from "https://www.gstatic.com/firebasejs/9.9.1/firebase-database.js";
+   const db = getDatabase(app);
+   const dbref = ref(db);
+
+   var name = document.getElementById("name");
+   var messbox = document.getElementById("message");
+   var send = document.getElementById("send");
+   const urlParams = new URLSearchParams(window.location.search);
+   var usernameValue = urlParams.get("");
+   //usernameValue = "Developer";
+   var ukey = null;
+   var usname = null;
+
+   document.addEventListener("DOMContentLoaded", async function () {
+    await get(child(dbref, "users/")).then((snapshot) => {
+    const uname = snapshot.val();
+    for (const key in uname) {
+     if (uname[key].Username == usernameValue) {
+      ukey = key;
+      unloadUser();
+      name.textContent = uname[key].Username;
+      break;
+     }
+    }
+   });
+   if (ukey == null || ukey == "undefined") {
+    history.back();
+   }
+   });
+
+   send.addEventListener("click", async function () {
+    loading(send);
+    const now = Date.now();
+    if (ukey != null && messbox.value != "") {
+     push(ref(db, "users/" + ukey + "/messages/"), {
+      message: messbox.value,
+      date: now,
+     })
+      .then(() => {
+       console.log("success");
+       unload(send, "Send message");
+       clear();
+       info("Message sent");
+      })
+      .catch((e) => {
+       console.log(e);
+       unload(send, "Send message");
+      });
+    } else if (messbox.value == "") {
+     unload(send, "Send message");
+     info("Don't be shy, send that person a message");
+    } else {
+     console.log("failed");
+     unload(send, "Send message");
+     history.back();
+    }
+   });
+  </script>
+ </body>
+</html>
