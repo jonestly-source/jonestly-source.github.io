@@ -1,138 +1,190 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="css/index.css" />
-    <title>Nothing</title>
-    <link rel="stylesheet" href="https://www.googleapis.com/webfonts/v1/webfonts?key=Poppins" type="text/css" media="all" />
-    <script src="js/index.js"></script>
-	<link rel="icon" type="image/x-icon" href="nothing-logo.ico">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js" integrity="sha512-E8QSvWZ0eCLGk4km3hxSsNmGWbLtSCSUcewDQPQWZF6pEU8GlT8a5fF32wOl1i8ftdMhssTrF/OhyGWwonTcXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  </head>
-  <body>
-    <span id="dim"></span>
-      <div class="alert" id="alert">
-        <p id="alert-text"></p>
-      </div>
-    <div class="container">
-      <div class="content">
-        <img src="nothing-logo.png" alt="Nothing" class="logo" />
-        <input
-          type="text"
-          name="username"
-          id="username"
-          value=""
-          placeholder="Username"
-          class="field"
-        />
-        <input
-          type="password"
-          name="password"
-          id="password"
-          value=""
-          placeholder="Password"
-          class="field"
-        />
-        <button type="submit" id="submit">Sign in</button>
-        <a href="register">Don't have an account?</a>
-      </div>
+ <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="/css/index.css" />
+  <title>Nothing</title>
+  <link rel="shortcut icon" href="nothing.ico" type="image/x-icon" />
+  <link
+   rel="stylesheet"
+   href="https://fonts.googleapis.com/css?family=Poppins"
+   type="text/css"
+   media="all"
+  />
+  <script src="/js/index.js"></script>
+  <script
+   src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"
+   integrity="sha512-E8QSvWZ0eCLGk4km3hxSsNmGWbLtSCSUcewDQPQWZF6pEU8GlT8a5fF32wOl1i8ftdMhssTrF/OhyGWwonTcXA=="
+   crossorigin="anonymous"
+   referrerpolicy="no-referrer"
+  ></script>
+ </head>
+ <body>
+  <span id="dim"></span>
+  <div class="alert" id="alert">
+   <p id="alert-text"></p>
+  </div>
+  <div class="container">
+   <div class="content">
+    <picture>
+     <source srcset="nothing-light.png" media="(prefers-color-scheme: dark)" />
+     <img src="nothing-logo.png" alt="Nothing" class="logo" />
+    </picture>
+    <input
+     type="text"
+     name="username"
+     id="username"
+     value=""
+     placeholder="Username"
+     class="field"
+    />
+    <input
+     type="password"
+     name="password"
+     id="password"
+     value=""
+     placeholder="Password"
+     class="field"
+    />
+    <button type="submit" id="submit">Sign in</button>
+    <a href="forgot-pass" id="forgot-pass">Forgot password</a>
+    <div class="separator">
+     <span class="sep"></span>
+     <p class="or">or</p>
+     <span class="sep"></span>
     </div>
-    <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.9.1/firebase-app.js";
-      const firebaseConfig = {
-        apiKey: "AIzaSyCuxZ0denbyqt5BwLn3md4S_lK4ukwpTmQ",
-        authDomain: "myproject-b37b7.firebaseapp.com",
-        databaseURL: "https://myproject-b37b7-default-rtdb.firebaseio.com",
-        projectId: "myproject-b37b7",
-        storageBucket: "myproject-b37b7.appspot.com",
-        messagingSenderId: "603520430780",
-        appId: "1:603520430780:web:d40d827a497d4791cf96b9",
-      };
+    <button type="button" class="submit register">Sign up</button>
+   </div>
+  </div>
+  <script type="module">
+   import { initializeApp } from "https://www.gstatic.com/firebasejs/9.9.1/firebase-app.js";
+   const firebaseConfig = {
+    apiKey: "AIzaSyCuxZ0denbyqt5BwLn3md4S_lK4ukwpTmQ",
+    authDomain: "myproject-b37b7.firebaseapp.com",
+    databaseURL: "https://myproject-b37b7-default-rtdb.firebaseio.com",
+    projectId: "myproject-b37b7",
+    storageBucket: "myproject-b37b7.appspot.com",
+    messagingSenderId: "603520430780",
+    appId: "1:603520430780:web:d40d827a497d4791cf96b9",
+   };
 
-      // Initialize Firebase
-      const app = initializeApp(firebaseConfig);
-      import {
-        getDatabase,
-        ref,
-        child,
-        get,
-      } from "https://www.gstatic.com/firebasejs/9.9.1/firebase-database.js";
-      const db = getDatabase(app);
-      var currentUser = null;
-      var username = document.getElementById("username");
-      var password = document.getElementById("password");
-      var submitBtn = document.getElementById("submit");
-      let btnId = submit;
-      let txtCntnt = "Sign in";
-      
-      function validation() {
-       //let btnId = submit;
-       //var txtCntnt = "Sign in";
-        if ( password.value != "" && username.value != "") {
-          return true;
-        } else {
-          var alertInfo = "All fields must not be empty";
-          info(alertInfo);
-          //alert("All fields must not be empty.");
-          unload(btnId, txtCntnt);
-          return false;
-        }
-      }
+   // Initialize Firebase
+   const app = initializeApp(firebaseConfig);
+   import {
+    getDatabase,
+    ref,
+    child,
+    get,
+    update,
+    query,
+    orderByChild,
+    equalTo,
+   } from "https://www.gstatic.com/firebasejs/9.9.1/firebase-database.js";
+   import {
+    getAuth,
+    signInWithEmailAndPassword,
+    onAuthStateChanged,
+   } from "https://www.gstatic.com/firebasejs/9.9.1/firebase-auth.js";
+   const db = getDatabase(app);
+   const auth = getAuth(app);
+   var username = document.getElementById("username");
+   var password = document.getElementById("password");
+   var submit = document.getElementById("submit");
+   var reset = document.querySelector("#forgot-pass");
+   var reg = document.querySelector(".register");
 
-      function decpass(dbpass) {
-        var pass12 = CryptoJS.AES.decrypt(dbpass, password.value);
-        return pass12.toString(CryptoJS.enc.Utf8);
-      }
+   window.onload = () => {
+    loadUser();
+    onAuthStateChanged(auth, async (user) => {
+     if (await user) {
+      window.location.href = "dashboard";
+     } else {
+      unloadUser();
+     }
+    });
+   };
 
-      function clear() {
-        username.value = "";
-        password.value = "";
-      }
+   submit.addEventListener("click", async () => {
+    loading(submit);
+    try {
+     var email = username.value;
+     var val = await validation();
+     if (!val) {
+      email = await getUser();
+     }
+     await signEmail(email);
+     await info("Sign in successfully");
+     unload(submit, "Sign in");
+     window.location.href = "dashboard";
+    } catch (e) {
+     info(e);
+     unload(submit, "Sign in");
+    }
+   });
 
-      function login(users){
-        var alertInfo = "Login successfully.";
-        info(alertInfo);
-        let btnId = submit;
-        unload(btnId, txtCntnt);
-        //alert("success");
-        sessionStorage.setItem('users', JSON.stringify(users));
-        window.location="dashboard";
-      }
-      
-      window.onload = function(){
-	    currentUser = JSON.parse(sessionStorage.getItem('users'));
-	    if(currentUser != null){
-	      window.location = "dashboard";
-	    }
-	    }
-	    
-	    
-      submitBtn.addEventListener("click", function () {
-       
-        loading(btnId);
-        if (validation(true)) {
-          const dbref = ref(db);
-          get(child(dbref, "users/" + username.value)).then((snapshot) => {
-            if (snapshot.exists()) {
-              let dbpass = decpass(snapshot.val().Password);
-              if(dbpass == password.value){
-                login(snapshot.val());
-              }else{
-                var alertInfo = "Wrong password.";
-                info(alertInfo);
-               unload(btnId, txtCntnt);
-                //alert("Wrong password.");
-              }
-            } else {
-              var alertInfo = "Username does not exists.";
-              info(alertInfo);
-              unload(btnId, txtCntnt);
-              //alert("Username does not exists");
-            }
-          });
-        }
+   function getUser() {
+    return new Promise((resolve, reject) => {
+     const user = query(
+      ref(db, "users/"),
+      orderByChild("Username"),
+      equalTo(username.value)
+     );
+     get(user)
+      .then((snapshot) => {
+       if (snapshot.exists()) {
+        snapshot.forEach((child) => {
+         resolve(child.val().Email);
+        });
+       } else {
+        reject("User not found");
+       }
+      })
+      .catch((error) => {
+       reject(error);
       });
-    </script>
-  </body>
+    });
+   }
+
+   function validation() {
+    const val = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@(gmail|yahoo|outlook)\.com$/;
+    return new Promise((resolve, reject) => {
+     if (!username.value || !password.value) {
+      const error = "Don't make all fields useless";
+      unload(submit, "Sign in");
+      reject(error);
+     } else if (username.value.match(val)) {
+      resolve(true);
+     } else {
+      resolve(false);
+     }
+    });
+   }
+
+   function signEmail(email) {
+    return new Promise((resolve, reject) => {
+     signInWithEmailAndPassword(auth, email, password.value)
+      .then((userCredential) => {
+       resolve(true);
+      })
+      .catch((error) => {
+       const errorCode = error.code;
+       const errorMessage = error.message;
+       var e = errorCode.slice(5);
+       let er = e.replaceAll("-", " ");
+       let err = er[0].toUpperCase() + er.substring(1).toLowerCase();
+       reject(err);
+      });
+    });
+   }
+
+   reset.addEventListener("click", () => {
+    window.location.href = "forgot-pass";
+   });
+
+   reg.addEventListener("click", () => {
+    window.location.href = "register";
+   });
+  </script>
+ </body>
 </html>
